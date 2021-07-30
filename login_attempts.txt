@@ -1,0 +1,6 @@
+Jul 29, 2021 8:19:21 PM com.jimmydonlogan.controller.Login lambda$AddEvents$0
+INFO: user is:test
+Jul 29, 2021 8:19:21 PM com.jimmydonlogan.controller.Login lambda$AddEvents$0
+INFO: password is:test
+Jul 29, 2021 8:19:21 PM com.jimmydonlogan.controller.Login lambda$AddEvents$0
+INFO: test has logged in.
