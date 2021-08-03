@@ -7,9 +7,14 @@ import javafx.util.StringConverter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Contact converter.
+ */
 public class ContactConverter extends StringConverter<Contact> {
 
-    /** Cache of Contacts */
+    /**
+     * The Contact map.
+     */
     private final Map<String, Contact> contactMap = new HashMap<>();
 
     @Override

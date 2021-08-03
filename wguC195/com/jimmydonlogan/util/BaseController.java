@@ -2,7 +2,9 @@ package com.jimmydonlogan.util;
 
 
 /**
- * created by James Logan as a Base for main screen controller
+ * The type Base controller.
+ *
+ * @param <T> the type parameter
  */
 public abstract class BaseController <T>{
 

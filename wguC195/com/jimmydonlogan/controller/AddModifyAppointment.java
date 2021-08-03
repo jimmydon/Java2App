@@ -10,54 +10,129 @@ import javafx.scene.control.*;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+/**
+ * The type Add modify appointment.
+ */
 public class AddModifyAppointment implements MakeAddUpdateView {
 
 
+    /**
+     * The Btn cancel.
+     */
     private final Button btnCancel = new Button("Cancel");
+    /**
+     * The Btn save.
+     */
     private final Button btnSave = new Button("Save");
+    /**
+     * The View add modify appointment.
+     */
     public final AddModifyAppointmentView viewAddModifyAppointment;
+    /**
+     * The Apmnt util.
+     */
     private final CustomersAppointsUtils apmntUtil = new CustomersAppointsUtils();
+    /**
+     * The Appointment added or modified.
+     */
     private Boolean appointmentAddedOrModified;
+    private final CustomerAppointBean beanNotifyCancelAddAppointment;
 
-
+    /**
+     * The Enum add modify.
+     */
     public AddModify enumAddModify;
 
+    /**
+     * The User.
+     */
     private final User user;
+    /**
+     * The Apmntlst txt fields.
+     */
     private ArrayList<TextField> apmntlstTxtFields;
+    /**
+     * The Apmnt data.
+     */
     Appointment apmntData;
+    /**
+     * The Util.
+     */
     private final CustomersAppointsUtils util = new CustomersAppointsUtils();
+    /**
+     * The Formatter alpha space.
+     */
     private final TextFormatter<String> formatterAlphaSpace = new TextFormatter<>(util.filterAlphaSpace);
+    /**
+     * The Formatter alpha numeric space 1.
+     */
     private final TextFormatter<String> formatterAlphaNumericSpace1 = new TextFormatter<>(util.filterAlphaNumericSpace);
+    /**
+     * The Formatter alpha numeric space 2.
+     */
     private final TextFormatter<String> formatterAlphaNumericSpace2 = new TextFormatter<>(util.filterAlphaNumericSpace);
+    /**
+     * The Formatter alpha numeric space 3.
+     */
     private final TextFormatter<String> formatterAlphaNumericSpace3 = new TextFormatter<>(util.filterAlphaNumericSpace);
+    /**
+     * The Obsv appnmt.
+     */
     private final ObsList<Appointment> obsvAppnmt;
+    /**
+     * The Prt.
+     */
     private final Print prt = new Print();
 
-    public AddModifyAppointment(ComboBox<Customer> cmbxCustomers, User user, ObsList<Appointment> obsvAppnmt) {
-        this.obsvAppnmt = obsvAppnmt;
-        this.user = user;
-        initArrayTextFields();
-        viewAddModifyAppointment = new AddModifyAppointmentView(btnSave, btnCancel, cmbxCustomers);
-        ObsList<Contact> obsContact = new ObsList<>();
-        AddCountryDivContactsToObsLst addRecordsToLst = new AddCountryDivContactsToObsLst();
-        addRecordsToLst.getContactsForCombo(obsContact, viewAddModifyAppointment.cmbxContacts);
+    /**
+     * Instantiates a new Add modify appointment.
+     *
+     * @param cmbxCustomers the cmbx customers
+     * @param user          the user
+     * @param obsvAppnmt    the obsv appnmt
+     */
+    public AddModifyAppointment(ComboBox<Customer> cmbxCustomers, User user, ObsList<Appointment> obsvAppnmt, CustomerAppointBean beanNotifyCancelAddAppointment) {
+        try {
 
-        addRecordsToLst.putDataInContactList(obsContact);
-        addEvents();
+        } finally {
+            this.beanNotifyCancelAddAppointment = beanNotifyCancelAddAppointment;
+            this.obsvAppnmt = obsvAppnmt;
+            this.user = user;
+            initArrayTextFields();
+            viewAddModifyAppointment = new AddModifyAppointmentView(btnSave, btnCancel, cmbxCustomers);
+            ObsList<Contact> obsContact = new ObsList<>();
+            AddCountryDivContactsToObsLst addRecordsToLst = new AddCountryDivContactsToObsLst();
+            addRecordsToLst.getContactsForCombo(obsContact, viewAddModifyAppointment.cmbxContacts);
+
+            addRecordsToLst.putDataInContactList(obsContact);
+            addEvents();
+
+        }
     }
 
+    /**
+     * Display.
+     */
     public void display() {
 
-        viewAddModifyAppointment.addOrModify = enumAddModify;
-        appointmentAddedOrModified = false;
+        try {
+            viewAddModifyAppointment.addOrModify = enumAddModify;
+            appointmentAddedOrModified = false;
 
-        viewAddModifyAppointment.buildAddAppointmentForm();
+            viewAddModifyAppointment.buildAddAppointmentForm();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
 
+    /**
+     * Add events.
+     */
     private void addEvents() {
 
         try {
@@ -72,35 +147,49 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Add date picker events.
+     * using lambda expression to instantiate  DatePickerEvents and avoid using bulky anonymous class implementation
+     * also smaller cleaner code
+     */
     private void addDatePickerEvents() {
 
-        viewAddModifyAppointment.dtpStart.getEditor().focusedProperty().addListener((obj, wasFocused, isFocused) -> {
-            if (!isFocused) {
-                try {
-                    viewAddModifyAppointment.dtpStart.setValue(
-                            viewAddModifyAppointment.dtpStart.getConverter().fromString(viewAddModifyAppointment.dtpStart.getEditor().getText()));
-                } catch (DateTimeParseException e) {
-                    viewAddModifyAppointment.dtpStart.getEditor().setText(
-                            viewAddModifyAppointment.dtpStart.getConverter().toString(viewAddModifyAppointment.dtpStart.getValue()));
+        try {
+            viewAddModifyAppointment.dtpStart.getEditor().focusedProperty().addListener((obj, wasFocused, isFocused) -> {
+                if (!isFocused) {
+                    try {
+                        viewAddModifyAppointment.dtpStart.setValue(
+                                viewAddModifyAppointment.dtpStart.getConverter().fromString(viewAddModifyAppointment.dtpStart.getEditor().getText()));
+                    } catch (DateTimeParseException e) {
+                        viewAddModifyAppointment.dtpStart.getEditor().setText(
+                                viewAddModifyAppointment.dtpStart.getConverter().toString(viewAddModifyAppointment.dtpStart.getValue()));
+                    }
                 }
-            }
-        });
+            });
 
-        viewAddModifyAppointment.dtpEnd.getEditor().focusedProperty().addListener((obj, wasFocused, isFocused) -> {
-            if (!isFocused) {
-                try {
-                    viewAddModifyAppointment.dtpEnd.setValue(
-                            viewAddModifyAppointment.dtpEnd.getConverter().fromString(
-                                    viewAddModifyAppointment.dtpEnd.getEditor().getText()));
-                } catch (DateTimeParseException e) {
-                    viewAddModifyAppointment.dtpEnd.getEditor().setText(
-                            viewAddModifyAppointment.dtpEnd.getConverter().toString(
-                                    viewAddModifyAppointment.dtpEnd.getValue()));
+            viewAddModifyAppointment.dtpEnd.getEditor().focusedProperty().addListener((obj, wasFocused, isFocused) -> {
+                if (!isFocused) {
+                    try {
+                        viewAddModifyAppointment.dtpEnd.setValue(
+                                viewAddModifyAppointment.dtpEnd.getConverter().fromString(
+                                        viewAddModifyAppointment.dtpEnd.getEditor().getText()));
+                    } catch (DateTimeParseException e) {
+                        viewAddModifyAppointment.dtpEnd.getEditor().setText(
+                                viewAddModifyAppointment.dtpEnd.getConverter().toString(
+                                        viewAddModifyAppointment.dtpEnd.getValue()));
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Add btn save event.
+     * using lambda expression to instantiate btnSave and avoid using bulky anonymous class implementation
+     * * also smaller cleaner code
+     */
     private void addBtnSaveEvent() {
         try {
             btnSave.setOnAction((event) -> addOrModifyAppointmentInDB(apmntlstTxtFields));
@@ -109,14 +198,30 @@ public class AddModifyAppointment implements MakeAddUpdateView {
         }
     }
 
+    /**
+     * Add btn cancel event.
+     * using lambda expression to instantiate btnCancel and avoid using bulky anonymous class implementation
+     * also smaller cleaner code
+     */
     private void addBtnCancelEvent() {
         try {
-            btnCancel.setOnAction(e -> viewAddModifyAppointment.stgAddAppointmentForm.close());
+            btnCancel.setOnAction(e -> cancelNotifyClose());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void cancelNotifyClose() {
+
+        beanNotifyCancelAddAppointment.setValue(1);
+        viewAddModifyAppointment.stgAddAppointmentForm.close();
+    }
+
+    /**
+     * Do add or modify in db boolean.
+     *
+     * @return the boolean
+     */
     private Boolean doAddOrModifyInDb() {
         try {
 
@@ -134,12 +239,33 @@ public class AddModifyAppointment implements MakeAddUpdateView {
         return false;
     }
 
+    /**
+     * Add or modify appointment in db.
+     *
+     * @param lstTxtFields the lst txt fields
+     */
     private void addOrModifyAppointmentInDB(ArrayList<TextField> lstTxtFields) {
 
 
+
+        if(viewAddModifyAppointment.dtpEnd.getValue()==null || viewAddModifyAppointment.dtpStart==null)
+        {
+            util.showAlert("Select an appointment start and end date and time");
+            return;
+        }
+
+
         apmntData = apmntUtil.putInputDataInAppointmentObject(viewAddModifyAppointment);
-        apmntData.setContactId(viewAddModifyAppointment.cmbxContacts.getSelectionModel().getSelectedItem().getContactId());
-        apmntData.setCust_id(AddModifyAppointmentView.cmbxCustomers.getSelectionModel().getSelectedItem().getCust_id());
+        try {
+            apmntData.setContactId(viewAddModifyAppointment.cmbxContacts.getSelectionModel().getSelectedItem().getContactId());
+        } catch (Exception e) {
+            util.showAlert("Select a Contact");
+        }
+        try {
+            apmntData.setCust_id(AddModifyAppointmentView.cmbxCustomers.getSelectionModel().getSelectedItem().getCust_id());
+        } catch (Exception e) {
+            util.showAlert("Select a Customer");
+        }
         apmntData.setUser_ID(user.getUserId());
 
 
@@ -163,6 +289,12 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Check inputs boolean.
+     *
+     * @param lstTxtFields the lst txt fields
+     * @return the boolean
+     */
     private Boolean checkInputs(ArrayList<TextField> lstTxtFields) {
 
 
@@ -178,31 +310,31 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
             if (apmntUtil.isBetweenOpeningClosing(apmntData.getStart())) {
 
-                apmntUtil.showalert("The start time must be during business hours. After " +
+                apmntUtil.showAlert("The start time must be during business hours. After " +
                         apmntUtil.getStartTimeBasedOnEst(apmntData.getStart()));
                 return false;
             }
             if (apmntUtil.isBetweenOpeningClosing(apmntData.getEnd())) {
 
-                apmntUtil.showalert("The end time must be during business hours. Before " +
+                apmntUtil.showAlert("The end time must be during business hours. Before " +
                         apmntUtil.getEndTimeBasedOnEst(apmntData.getEnd()));
 
                 return false;
             }
 
-            if(doesAppointmentOverlap(apmntData.getStart()))
-              return  false;
+            if (doesAppointmentOverlap(apmntData.getStart()))
+                return false;
 
-            if(doesAppointmentOverlap(apmntData.getEnd()))
-                return  false;
+            if (doesAppointmentOverlap(apmntData.getEnd()))
+                return false;
 
             if (apmntData.getCust_id() == 0) {
-                apmntUtil.showalert("Please select a Customer to add an appointment for");
+                apmntUtil.showAlert("Please select a Customer to add an appointment for");
                 return false;
             }
 
             if (apmntData.getContactId() == 0) {
-                apmntUtil.showalert("Please select a Contact");
+                apmntUtil.showAlert("Please select a Contact");
                 return false;
             }
             if (apmntUtil.anEmptyTextField(lstTxtFields))
@@ -214,30 +346,79 @@ public class AddModifyAppointment implements MakeAddUpdateView {
         return false;
     }
 
-    private Boolean doesAppointmentOverlap(Timestamp apmntTime) {
+    /**
+     * Does appointment overlap boolean.
+     *
+     * @param aapmntTime the apmnt time
+     * @return the boolean
+     *
+     *
+     */
+    private Boolean doesAppointmentOverlap(Timestamp aapmntTime) {
 
-        Optional<Appointment> result =
-                obsvAppnmt.getObsList().stream().filter(appointment -> (
-                             apmntTime.after(appointment.getStart())  || apmntTime.equals(appointment.getStart()) )
-                        && ( apmntTime.before(appointment.getEnd() ) || apmntTime.equals(appointment.getEnd())
-                        )).findFirst();
+        try {
+            Timestamp apmntTime=util.convertTimeStampToUTC(aapmntTime);
 
-        if(result.isEmpty())
+
+
+            for (Appointment appointment : obsvAppnmt.getObsList()) {
+
+
+                prt.printString.accept(" id=" +  appointment.getAppointment_ID()
+                        +" testing overlap in db start is="+appointment.getStart() +
+                       " comparing with apmnt time of "+ apmntTime);
+
+
+                if (apmntTime.equals(appointment.getStart())) {
+                    prt.printString.accept("1match found");
+                    overlapMsg(apmntTime, appointment);
+
+                    return true;
+                }
+                if (apmntTime.equals(appointment.getEnd())) {
+                    prt.printString.accept("2match found");
+                    overlapMsg(apmntTime, appointment);
+                    return true;
+                }
+
+                if (apmntTime.after(appointment.getStart()) && apmntTime.before(appointment.getEnd())) {
+                    prt.printString.accept("3 match found");
+                    overlapMsg(apmntTime, appointment);
+                    return true;
+                }
+
+
+
+            }
             return false;
-        apmntUtil.showalert( " appointment time " + apmntTime.toLocalDateTime() +
-                "   overlaps existing appointment for Appointment_id=" + result.get().getAppointment_ID() + " times:"+
-                result.get().getDateStart() + " to " +
-                 result.get().getDateEnd()
-                +
-                " for " + result.get().getName());
 
-        prt.printString.accept(  apmntTime.toLocalDateTime()+ " time overlaps " + result.get().getStart().toLocalDateTime()
-        + " id="+ result.get().getAppointment_ID());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return true;
 
 
     }
 
+    private void overlapMsg(Timestamp apmntTime, Appointment result) {
+
+        try {
+            apmntUtil.showAlert(" appointment time "+ util.convertToCurrentTimeZone(apmntTime) +
+                    " overlaps existing appointment for Appointment_id=" +
+                    result.getAppointment_ID() + " times:" +
+                    result.getDateStart() + " to " +
+                    result.getDateEnd()
+                    +
+                    " for " + result.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Add error checking.
+     */
     private void addErrorChecking() {
         try {
             AddModifyAppointmentView.txtApmntTitle.setTextFormatter(formatterAlphaSpace);
@@ -251,6 +432,9 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Clear appointment inputs.
+     */
     public void clearAppointmentInputs() {
 
 
@@ -264,18 +448,23 @@ public class AddModifyAppointment implements MakeAddUpdateView {
         }
     }
 
+    /**
+     * Feedback on db transaction.
+     *
+     * @param statusOfDbTrans the status of db trans
+     */
     private void feedbackOnDBTransaction(Boolean statusOfDbTrans) {
         try {
             if (!statusOfDbTrans) {
-                apmntUtil.showalert("An error occurred please check input and try again ");
+                apmntUtil.showAlert("An error occurred please check input and try again ");
 
 
             } else {
                 String name = AddModifyAppointmentView.cmbxCustomers.getSelectionModel().getSelectedItem().getName();
                 if (enumAddModify == AddModify.ADD)
-                    apmntUtil.showalert("Appointment for " + name + " has been added to the database.");
+                    apmntUtil.showAlert("Appointment for " + name + " has been added to the database.");
                 else
-                    apmntUtil.showalert("Appointment for " + name + " has been modified in the database.");
+                    apmntUtil.showAlert("Appointment for " + name + " has been modified in the database.");
 
 
                 appointmentAddedOrModified = true;
@@ -286,6 +475,9 @@ public class AddModifyAppointment implements MakeAddUpdateView {
         }
     }
 
+    /**
+     * Name text fields.
+     */
     private void nameTextFields() {
         try {
             AddModifyAppointmentView.txtApmntTitle.setId("Title");
@@ -299,6 +491,9 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Init array text fields.
+     */
     private void initArrayTextFields() {
         try {
             nameTextFields();
@@ -309,6 +504,11 @@ public class AddModifyAppointment implements MakeAddUpdateView {
         }
     }
 
+    /**
+     * Put selected appointment in modify input.
+     *
+     * @param anAppmnt the an appmnt
+     */
     public void putSelectedAppointmentInModifyInput(Appointment anAppmnt) {
 
         try {
@@ -331,6 +531,11 @@ public class AddModifyAppointment implements MakeAddUpdateView {
     }
 
 
+    /**
+     * Sets dates in date picker modify an appointment.
+     *
+     * @param anAppmnt the an appmnt
+     */
     private void setDatesInDatePickerModifyAnAppointment(Appointment anAppmnt) {
 
         try {
@@ -346,19 +551,32 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Sets times in spinner for modify an apmnt.
+     *
+     * @param anAppmnt the an appmnt
+     */
     private void setTimesInSpinnerForModifyAnApmnt(Appointment anAppmnt) {
-        System.out.println("1Start date=" + anAppmnt.getDateStart() + "end date=" + anAppmnt.getDateEnd());
+        try {
 
-        LocalDateTime startdate = util.convertToLocalDateTime(anAppmnt.getDateStart());
-        LocalDateTime enddate = util.convertToLocalDateTime(anAppmnt.getDateEnd());
+            LocalDateTime startdate = util.convertToLocalDateTime(anAppmnt.getDateStart());
+            LocalDateTime enddate = util.convertToLocalDateTime(anAppmnt.getDateEnd());
 
-        System.out.println("2Start date=" + startdate.toString() + "end date=" + enddate.toString());
-        viewAddModifyAppointment.spnStart.getValueFactory().setValue(startdate.toLocalTime());
-        viewAddModifyAppointment.spnEnd.getValueFactory().setValue(enddate.toLocalTime());
+
+            viewAddModifyAppointment.spnStart.getValueFactory().setValue(startdate.toLocalTime());
+            viewAddModifyAppointment.spnEnd.getValueFactory().setValue(enddate.toLocalTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
 
+    /**
+     * Sets to customer in combo.
+     *
+     * @param anAppmnt the an appmnt
+     */
     private void setToCustomerInCombo(Appointment anAppmnt) {
 
         try {
@@ -372,6 +590,11 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Sets to contact in combo.
+     *
+     * @param anAppmnt the an appmnt
+     */
     private void setToContactInCombo(Appointment anAppmnt) {
         try {
             Contact c = new Contact();
@@ -384,6 +607,9 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Clear inputs.
+     */
     public void clearInputs() {
         try {
             AddModifyAppointmentView.txtApmntTitle.setText("");
@@ -395,6 +621,11 @@ public class AddModifyAppointment implements MakeAddUpdateView {
         }
     }
 
+    /**
+     * Put text fields in array.
+     *
+     * @param lstTxtFields the lst txt fields
+     */
     private void putTextFieldsInArray(ArrayList<TextField> lstTxtFields) {
 
 
@@ -410,6 +641,11 @@ public class AddModifyAppointment implements MakeAddUpdateView {
 
     }
 
+    /**
+     * Gets appointment added or modified.
+     *
+     * @return the appointment added or modified
+     */
     public Boolean getAppointmentAddedOrModified() {
         return appointmentAddedOrModified;
     }

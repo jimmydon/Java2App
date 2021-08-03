@@ -6,13 +6,21 @@ import java.sql.*;
 import java.util.logging.Logger;
 
 
+/**
+ * The type My sql db.
+ */
 public class MySqlDb {
 
 
+    /**
+     * The App my sqlcon.
+     */
     public Connection appMySqlcon;
 
-    private static final Logger LOGGER = Logger.getLogger(MySqlDb.class.getName());
 
+    /**
+     * Instantiates a new My sql db.
+     */
     public MySqlDb(){
         try {
             appMySqlcon = DriverManager.getConnection(
@@ -24,11 +32,17 @@ public class MySqlDb {
         }
     }
 
+    /**
+     * Gets data from wgu db.
+     *
+     * @param query the query
+     * @return the data from wgu db
+     */
     public ResultSet getDataFromWguDB(String query)  {
 
         try{
 
-            LOGGER.info("query="+query);
+
             Statement stmt=appMySqlcon.createStatement();
 
 
@@ -43,13 +57,20 @@ public class MySqlDb {
     }
 
 
+    /**
+     * Do update or del int.
+     *
+     * @param query the query
+     * @return the int
+     */
     public int doUpdateOrDel(String query)
     {
         Statement stmtSql;
-        LOGGER.info("sqlUpdateOrDel:"+ query );
+
 
         try{
             stmtSql= appMySqlcon.createStatement();
+
             return stmtSql.executeUpdate(query);
         }
         catch(SQLException  sqlexcep)

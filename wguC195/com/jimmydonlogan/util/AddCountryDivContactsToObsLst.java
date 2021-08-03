@@ -12,18 +12,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * The type Add country div contacts to obs lst.
+ */
 public class AddCountryDivContactsToObsLst {
 
+    /**
+     * The C db.
+     */
     final MySqlDb cDB = new MySqlDb();
-    private static final Logger LOGGER = Logger.getLogger(AddCountryDivContactsToObsLst.class.getName());
 
+    /**
+     * Gets divisions for combo.
+     *
+     * @param divID           the div id
+     * @param obsDivisions    the obs divisions
+     * @param cmbxFirstLvlDiv the cmbx first lvl div
+     */
     public void getDivisionsForCombo(int divID, ObsList<FirstLevelDivision> obsDivisions,
                                      ComboBox<FirstLevelDivision> cmbxFirstLvlDiv) {
         String sqlSelect = "SELECT * FROM first_level_divisions where Country_ID=" + divID + ";";
         try {
 
 
-            LOGGER.info("sqlSelect=" + sqlSelect);
+
 
 
             obsDivisions.setRsltFromDB(cDB.getDataFromWguDB(sqlSelect));
@@ -36,6 +48,13 @@ public class AddCountryDivContactsToObsLst {
         }
 
     }
+
+    /**
+     * Gets contacts for combo.
+     *
+     * @param obsContact   the obs contact
+     * @param cmbxContacts the cmbx contacts
+     */
     public void getContactsForCombo(ObsList<Contact> obsContact, ComboBox<Contact> cmbxContacts) {
 
         try {
@@ -48,6 +67,13 @@ public class AddCountryDivContactsToObsLst {
                     "the following DP operation  failed : ", err);
         }
     }
+
+    /**
+     * Gets country for combo.
+     *
+     * @param obsCountry    the obs country
+     * @param cmbxCountries the cmbx countries
+     */
     public void getCountryForCombo(ObsList<Country> obsCountry, ComboBox<Country> cmbxCountries) {
 
         try {
@@ -61,6 +87,11 @@ public class AddCountryDivContactsToObsLst {
     }
 
 
+    /**
+     * Put data in contact list.
+     *
+     * @param obsContact the obs contact
+     */
     public void putDataInContactList(ObsList<Contact> obsContact) {
         Contact aRecord;
         ResultSet rsltFromDB = obsContact.getRsltFromDB();
@@ -82,6 +113,12 @@ public class AddCountryDivContactsToObsLst {
                     "the following DP operation  failed : ", err);
         }
     }
+
+    /**
+     * Put data in country list.
+     *
+     * @param obsCountry the obs country
+     */
     public void putDataInCountryList(ObsList<Country> obsCountry) {
         Country aRecord;
         ResultSet rsltFromDB = obsCountry.getRsltFromDB();
@@ -104,9 +141,14 @@ public class AddCountryDivContactsToObsLst {
         }
     }
 
+    /**
+     * Put data in division in list.
+     *
+     * @param obsDivisions the obs divisions
+     */
     public void putDataInDivisionInList(ObsList<FirstLevelDivision> obsDivisions) {
         FirstLevelDivision aRecord;
-        LOGGER.info("putDataInDivisionInList");
+
         ResultSet rsltFromDB = obsDivisions.getRsltFromDB();
         obsDivisions.clearItemsObsList();
         try {
@@ -127,9 +169,14 @@ public class AddCountryDivContactsToObsLst {
         }
     }
 
+    /**
+     * The type First level division converter.
+     */
     public static class FirstLevelDivisionConverter extends StringConverter<FirstLevelDivision> {
 
-        /** Cache of Divisions*/
+        /**
+         * The Division map.
+         */
         private final Map<String, FirstLevelDivision> divisionMap = new HashMap<>();
 
         @Override

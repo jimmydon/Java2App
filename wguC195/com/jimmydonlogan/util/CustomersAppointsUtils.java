@@ -24,17 +24,37 @@ import java.util.function.UnaryOperator;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+/**
+ * The type Customers appoints utils.
+ */
 public class CustomersAppointsUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(CustomersAppointsUtils.class.getName());
+    /**
+     * The Pattern alpha spaces.
+     */
     private final Pattern patternAlphaSpaces = Pattern.compile("[a-zA-Z ]*");
 
+    /**
+     * The Pattern alpha numeric spaces.
+     */
     private final Pattern patternAlphaNumericSpaces = Pattern.compile("^[a-zA-Z0-9 ]*$");
+    /**
+     * The Pattern alpha numeric no space.
+     */
     private final Pattern patternAlphaNumericNoSpace = Pattern.compile("^[a-zA-Z0-9]*$");
+    /**
+     * The Non null predicate.
+     */
     private final Predicate<String> nonNullPredicate = Objects::nonNull;
+    /**
+     * The Prt.
+     */
     private final Print prt = new Print();
 
 
+    /**
+     * The My sqldb.
+     */
     final MySqlDb mySqldb;
 
     {
@@ -42,6 +62,11 @@ public class CustomersAppointsUtils {
     }
 
 
+    /**
+     * Put appointment data in object model.
+     *
+     * @param obsActions the obs actions
+     */
     public void putAppointmentDataInObjectModel(ObsList<Appointment> obsActions) {
         Appointment aRecord;
 
@@ -76,6 +101,11 @@ public class CustomersAppointsUtils {
         }
     }
 
+    /**
+     * Put customer data in object model.
+     *
+     * @param obsActions the obs actions
+     */
     public void putCustomerDataInObjectModel(ObsList<Customer> obsActions) {
         Customer customer;
         ResultSet rsltset = obsActions.getRsltFromDB();
@@ -103,6 +133,12 @@ public class CustomersAppointsUtils {
         }
     }
 
+    /**
+     * Put input data in customer object customer.
+     *
+     * @param divID the div id
+     * @return the customer
+     */
     public Customer putInputDataInCustomerObject(int divID) {
         try {
             Customer cst = new Customer();
@@ -122,6 +158,12 @@ public class CustomersAppointsUtils {
     }
 
 
+    /**
+     * Put input data in appointment object appointment.
+     *
+     * @param vwAc the vw ac
+     * @return the appointment
+     */
     public Appointment putInputDataInAppointmentObject(AddModifyAppointmentView vwAc) {
         try {
 
@@ -130,7 +172,6 @@ public class CustomersAppointsUtils {
             LocalDateTime dtlocalStart = getLocalDateTime(vwAc.dtpStart.getValue(),
                     vwAc.spnStart.getValue());
 
-            prt.printString.accept("vwAc.dtpStart.getValue()=" + vwAc.dtpStart.getValue());
 
             LocalDateTime dtlocalEnd = getLocalDateTime(vwAc.dtpEnd.getValue(),
                     vwAc.spnEnd.getValue());
@@ -154,6 +195,12 @@ public class CustomersAppointsUtils {
     }
 
 
+    /**
+     * Insert data into appointment db table boolean.
+     *
+     * @param anAppointment the an appointment
+     * @return the boolean
+     */
     public boolean insertDataIntoAppointmentDBTable(Appointment anAppointment) {
         try {
 
@@ -161,15 +208,11 @@ public class CustomersAppointsUtils {
             SimpleDateFormat dtformat = new SimpleDateFormat(
                     "yyyy-MM-dd HH:mm:ss", Locale.US);
 
-            LOGGER.info("start before utc convert:" + anAppointment.getStart().toLocalDateTime());
-            LOGGER.info("end before utc convert:" + anAppointment.getEnd().toLocalDateTime());
 
             dtformat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
             String start = dtformat.format(anAppointment.getStart());
             String end = dtformat.format(anAppointment.getEnd());
-            LOGGER.info("start after utc convert:" + start);
-            LOGGER.info("end after utc convert:" + end);
 
             //anAppointment.getStart().toInstant()
 
@@ -190,8 +233,6 @@ public class CustomersAppointsUtils {
             sqlPreparedStmt.setInt(11, anAppointment.getContactId());
 
 
-            LOGGER.info("sqlPreparedStmt:" + sqlPreparedStmt);
-
             sqlPreparedStmt.execute();
             return true;
 
@@ -201,6 +242,12 @@ public class CustomersAppointsUtils {
         return false;
     }
 
+    /**
+     * Insert data into customer table boolean.
+     *
+     * @param aCust the a cust
+     * @return the boolean
+     */
     public boolean insertDataIntoCustomerTable(Customer aCust) {
         try {
             String sqlInsert = makeInsertStatementForCustomer();
@@ -222,6 +269,12 @@ public class CustomersAppointsUtils {
         return false;
     }
 
+    /**
+     * Update appointment record in db boolean.
+     *
+     * @param anAppointment the an appointment
+     * @return the boolean
+     */
     public Boolean updateAppointmentRecordInDb(Appointment anAppointment) {
 
         try {
@@ -229,8 +282,6 @@ public class CustomersAppointsUtils {
             SimpleDateFormat dtformat = new SimpleDateFormat(
                     "yyyy-MM-dd HH:mm:ss", Locale.US);
 
-            LOGGER.info("start before utc convert:" + anAppointment.getStart().toLocalDateTime());
-            LOGGER.info("end before utc convert:" + anAppointment.getEnd().toLocalDateTime());
 
             dtformat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -242,7 +293,6 @@ public class CustomersAppointsUtils {
             String sqlUpdate = makeUpdateStatementForAppointment();
 
 
-            LOGGER.info("sqlupdate:" + sqlUpdate);
             PreparedStatement sqlPreparedStmt = mySqldb.appMySqlcon.prepareStatement(sqlUpdate);
 
             sqlPreparedStmt.setString(1, anAppointment.getTitle());
@@ -262,8 +312,6 @@ public class CustomersAppointsUtils {
             sqlPreparedStmt.setString(11, updatedAt);
             sqlPreparedStmt.setInt(12, anAppointment.getAppointment_ID());
 
-            LOGGER.info(" sqlPreparedStmt:" + sqlPreparedStmt);
-
 
             sqlPreparedStmt.executeUpdate();
 
@@ -276,6 +324,12 @@ public class CustomersAppointsUtils {
 
     }
 
+    /**
+     * Update customer record in db boolean.
+     *
+     * @param aCust the a cust
+     * @return the boolean
+     */
     public boolean updateCustomerRecordInDb(Customer aCust) {
         try {
             String sqlUpdate = makeUpdateStatementForCustomer();
@@ -287,7 +341,7 @@ public class CustomersAppointsUtils {
             sqlPreparedStmt.setString(5, "C195 Java App James Logan");
             sqlPreparedStmt.setInt(6, aCust.getDivision_id());
             sqlPreparedStmt.setInt(7, aCust.getCust_id());
-            LOGGER.info("sqlupdate:" + sqlUpdate);
+
 
             sqlPreparedStmt.executeUpdate();
             return true;
@@ -298,6 +352,11 @@ public class CustomersAppointsUtils {
 
     }
 
+    /**
+     * Make update statement for customer string.
+     *
+     * @return the string
+     */
     private String makeUpdateStatementForCustomer() {
 
 
@@ -309,6 +368,11 @@ public class CustomersAppointsUtils {
                 "Division_ID=? where Customer_ID=?; ";
     }
 
+    /**
+     * Make update statement for appointment string.
+     *
+     * @return the string
+     */
     private String makeUpdateStatementForAppointment() {
 
 
@@ -334,6 +398,11 @@ public class CustomersAppointsUtils {
         return null;
     }
 
+    /**
+     * Make insert statement for customer string.
+     *
+     * @return the string
+     */
     private String makeInsertStatementForCustomer() {
 
 
@@ -341,6 +410,11 @@ public class CustomersAppointsUtils {
                 "Postal_Code,Phone,Created_By,Last_Updated_By,Division_ID) values(?,?,?,?,?,?,?); ";
     }
 
+    /**
+     * Make insert statement for appointment string.
+     *
+     * @return the string
+     */
     private String makeInsertStatementForAppointment() {
 
 
@@ -358,6 +432,11 @@ public class CustomersAppointsUtils {
                 "Contact_ID) values(?,?,?,?,?,?,?,?,?,?,?); ";
     }
 
+    /**
+     * Gets user from user name.
+     *
+     * @param user the user
+     */
     public void getUserFromUserName(User user) {
         ResultSet rsltFromDB = getUserPasswordIdFromDB(user.getName());
         try {
@@ -377,6 +456,13 @@ public class CustomersAppointsUtils {
 
     }
 
+    /**
+     * Gets selected customers country division.
+     *
+     * @param t     the t
+     * @param y     the y
+     * @param divID the div id
+     */
     public void getSelectedCustomersCountryDivision(Country t, FirstLevelDivision y, int divID) {
 
         ResultSet rsltFromDB = getAcountryAndAdivisionFromDB(divID);
@@ -397,6 +483,12 @@ public class CustomersAppointsUtils {
         }
     }
 
+    /**
+     * Gets acountry and adivision from db.
+     *
+     * @param divId the div id
+     * @return the acountry and adivision from db
+     */
     private ResultSet getAcountryAndAdivisionFromDB(int divId) {
         try {
 
@@ -415,6 +507,12 @@ public class CustomersAppointsUtils {
 
     }
 
+    /**
+     * Gets user password id from db.
+     *
+     * @param userName the user name
+     * @return the user password id from db
+     */
     private ResultSet getUserPasswordIdFromDB(String userName) {
         try {
 
@@ -423,7 +521,7 @@ public class CustomersAppointsUtils {
             String sql = "SELECT User_ID,Password  " +
                     " from users where User_Name='" +
                     userName + "'";
-            LOGGER.info("sql=" + sql);
+
 
             return stmt.executeQuery(sql);
         } catch (SQLException sqlexcep) {
@@ -434,29 +532,44 @@ public class CustomersAppointsUtils {
 
     }
 
+    /**
+     * Delete appointment int.
+     *
+     * @param Appointment_ID the appointment id
+     * @return the int
+     */
     public int deleteAppointment(int Appointment_ID) {
-        String queryDelApmnt = "delete from appointments where Appointment_ID=" + Appointment_ID;
-        int rowsDeleted = mySqldb.doUpdateOrDel(queryDelApmnt);
+        try {
+            String queryDelApmnt = "delete from appointments where Appointment_ID=" + Appointment_ID;
+            int rowsDeleted = mySqldb.doUpdateOrDel(queryDelApmnt);
 
-        callThreadSleep(1000L);
-        return rowsDeleted;
+            callThreadSleep(1000L);
+            return rowsDeleted;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
-    public int deleteCustomerRecord(int CustID) {
+    /**
+     * Delete customer record int.
+     *
+     * @param CustID the cust id
+     * @return the int
+     */
+    public int deleteCustomerAppointments(int CustID) {
 
         try {
             String queryDelApmnt = "delete from appointments where Customer_ID=" + CustID;
 
-            int rowsOfApmntsDeleted = mySqldb.doUpdateOrDel(queryDelApmnt);
+            int rowsOfAppointsDeleted = mySqldb.doUpdateOrDel(queryDelApmnt);
             callThreadSleep(2000L);
 
-         
 
 
 
-            callThreadSleep(2000L);
 
-            return rowsOfApmntsDeleted;
+            return rowsOfAppointsDeleted;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -464,6 +577,32 @@ public class CustomersAppointsUtils {
         return 0;
     }
 
+    /**
+     * @param CustID
+     * @return
+     */
+    public int deleteCustomerRecord(int CustID)
+    {
+
+        try {
+        String queryDelCustomer = "delete from customers where Customer_ID=" + CustID;
+        int rowsDeleted = mySqldb.doUpdateOrDel(queryDelCustomer);
+
+
+
+            return rowsDeleted;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+
+    }
+
+    /**
+     * Call thread sleep.
+     *
+     * @param milliSeconds the milli seconds
+     */
     public void callThreadSleep(Long milliSeconds) {
         try {
             Thread.sleep(milliSeconds);
@@ -473,6 +612,13 @@ public class CustomersAppointsUtils {
     }
 
 
+    /**
+     * Gets local date time.
+     *
+     * @param date the date
+     * @param time the time
+     * @return the local date time
+     */
     public LocalDateTime getLocalDateTime(LocalDate date, LocalTime time) {
 
         try {
@@ -487,16 +633,28 @@ public class CustomersAppointsUtils {
     }
 
 
+    /**
+     * Phone number is valid boolean.
+     *
+     * @param phoneNumber the phone number
+     * @return the boolean
+     */
     public boolean phoneNumberIsValid(String phoneNumber) {
 
-        LOGGER.info("phone number:" + phoneNumber);
+
         if (!isAValidPhoneNumber(phoneNumber)) {
-            showalert("Please Enter a valid phone number.");
+            showAlert("Please Enter a valid phone number.");
             return false;
         }
         return true;
     }
 
+    /**
+     * Convert date to local date local date.
+     *
+     * @param aDate the a date
+     * @return the local date
+     */
     public LocalDate convertDateToLocalDate(Date aDate) {
 
         try {
@@ -507,44 +665,76 @@ public class CustomersAppointsUtils {
         }
     }
 
+    /**
+     * Date times are valid boolean.
+     *
+     * @param earlier the earlier
+     * @param later   the later
+     * @return the boolean
+     */
     public boolean dateTimesAreValid(Timestamp earlier, Timestamp later) {
 
-        prt.printString.accept("earlier time is:" + earlier.toLocalDateTime());
-        prt.printString.accept("later time is:" + later.toLocalDateTime());
-        if (earlier.after(later)) {
 
-            showalert("The End time must be after the Start time");
-            return false;
+        try {
+            if(earlier.equals(later))
+            {
+                showAlert("The Start and End time cannot be the same.");
+                return false;
+
+            }
+
+            if (earlier.after(later)) {
+
+                showAlert("The End time must be after the Start time");
+                return false;
+            }
+
+
+            Timestamp timestampNow = new Timestamp(System.currentTimeMillis());
+
+
+            if (earlier.before(timestampNow)) {
+                showAlert("The Start time must be after the current time");
+                return false;
+            }
+
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
-        Timestamp timestampNow = new Timestamp(System.currentTimeMillis());
-
-
-        LOGGER.info("timestamp:" + timestampNow);
-        if (earlier.before(timestampNow)) {
-            showalert("The Start time must be after the current time");
-            return false;
-        }
-
-
-        return true;
+        return false;
     }
 
+    /**
+     * Add error events alpha and spaces only.
+     *
+     * @param textField the text field
+     *                  using lambda for addListener:concise code,avoid using bulky anonymous class implementation
+     */
     public void addErrorEventsAlphaAndSpacesOnly(TextField textField) {
-        textField.textProperty().addListener(event -> {
-            prt.printString.accept("Changed");
-            textField.pseudoClassStateChanged(
-                    PseudoClass.getPseudoClass("error"),
-                    !textField.getText().isEmpty() &&
-                            !textField.getText().
-                                    matches("([a-zA-Z ]+)")
-            );
-        });
+        try {
+            textField.textProperty().addListener(event -> {
+
+                textField.pseudoClassStateChanged(
+                        PseudoClass.getPseudoClass("error"),
+                        !textField.getText().isEmpty() &&
+                                !textField.getText().
+                                        matches("([a-zA-Z ]+)")
+                );
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
-
+    /**
+     * Convert to local date local date.
+     *
+     * @param date the date
+     * @return the local date
+     */
     public LocalDate convertToLocalDate(Date date) {
         try {
             return Instant.ofEpochMilli(date.getTime())
@@ -556,6 +746,12 @@ public class CustomersAppointsUtils {
         return null;
     }
 
+    /**
+     * Convert to local date time local date time.
+     *
+     * @param date the date
+     * @return the local date time
+     */
     public LocalDateTime convertToLocalDateTime(Date date) {
         try {
             return date.toInstant()
@@ -566,7 +762,16 @@ public class CustomersAppointsUtils {
         }
         return null;
     }
+    public Timestamp convertTimeStampToUTC(Timestamp timestamp) {
 
+        return Timestamp.valueOf(timestamp.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
+    }
+    /**
+     * Convert to current time zone date.
+     *
+     * @param timestamp the timestamp
+     * @return the date
+     */
     public Date convertToCurrentTimeZone(Timestamp timestamp) {
         //noinspection unused
 
@@ -589,6 +794,12 @@ public class CustomersAppointsUtils {
 
     //get the current time zone
 
+    /**
+     * Field len min 5 string.
+     *
+     * @param lstTextField the lst text field
+     * @return the string
+     */
     private String fieldLenMin5(ArrayList<TextField> lstTextField) {
         try {
 
@@ -605,14 +816,20 @@ public class CustomersAppointsUtils {
             }
 
 
-        } catch (Exception exception) {
+        } catch (Exception e) {
 
-            LOGGER.info(exception.toString());
+            e.printStackTrace();
         }
 
         return null;
     }
 
+    /**
+     * Empty text field string.
+     *
+     * @param lstTextField the lst text field
+     * @return the string
+     */
     private String emptyTextField(ArrayList<TextField> lstTextField) {
         try {
 
@@ -625,45 +842,71 @@ public class CustomersAppointsUtils {
                     return textField.getId();
                 }
             }
-        } catch (Exception exception) {
+        } catch (Exception e) {
 
-            LOGGER.info(exception.toString());
+            e.printStackTrace();
         }
 
 
         return null;
     }
 
+    /**
+     * Is a valid phone number boolean.
+     *
+     * @param phoneNo the phone no
+     * @return the boolean
+     */
     private static boolean isAValidPhoneNumber(String phoneNo) {
-        //format "1234567890"
-        if (phoneNo.matches("\\d{10}")) return true;
-            //with -, . or spaces
-        else if (phoneNo.matches("\\d{3}[-.\\s]\\d{3}[-.\\s]\\d{4}")) return true;
-            //extension length from 3 to 5
-        else if (phoneNo.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}")) return true;
-            //varea code is in braces ()
-        else return phoneNo.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}");
+        try {
+            //format "1234567890"
+            if (phoneNo.matches("\\d{10}")) return true;
+                //with -, . or spaces
+            else if (phoneNo.matches("\\d{3}[-.\\s]\\d{3}[-.\\s]\\d{4}")) return true;
+                //extension length from 3 to 5
+            else if (phoneNo.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}")) return true;
+                //varea code is in braces ()
+            else return phoneNo.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
 
     }
 
 
-    public void showalert(String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Appointment Application");
-        alert.setHeaderText(msg);
-        //alert.setContentText(msg);
+    /**
+     * Showalert.
+     *
+     * @param msg the msg
+     */
+    public void showAlert(String msg) {
+        try {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Appointment Application");
+            alert.setHeaderText(msg);
+            //alert.setContentText(msg);
 
-        alert.showAndWait();
+            alert.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
 
+    /**
+     * Has min chars boolean.
+     *
+     * @param lstTxtFields the lst txt fields
+     * @return the boolean
+     */
     public boolean hasMinChars(ArrayList<TextField> lstTxtFields) {
         try {
             String strHasMin = fieldLenMin5(lstTxtFields);
             if (strHasMin != null) {
 
-                showalert(strHasMin + " must be at least 5 chars");
+                showAlert(strHasMin + " must be at least 5 chars");
                 return true;
             }
 
@@ -675,14 +918,24 @@ public class CustomersAppointsUtils {
         return true;
     }
 
+    /**
+     * An empty text field boolean.
+     *
+     * @param lstTxtFields the lst txt fields
+     * @return the boolean
+     */
     public boolean anEmptyTextField(ArrayList<TextField> lstTxtFields) {
 
 
-        String strEmptyFieldName = emptyTextField(lstTxtFields);
-        if (strEmptyFieldName != null) {
+        try {
+            String strEmptyFieldName = emptyTextField(lstTxtFields);
+            if (strEmptyFieldName != null) {
 
-            showalert(strEmptyFieldName + " cannot be empty.");
-            return true;
+                showAlert(strEmptyFieldName + " cannot be empty.");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
@@ -690,7 +943,9 @@ public class CustomersAppointsUtils {
     }
 
 
-
+    /**
+     * The Filter alpha numeric no space. using lambda concise code,avoid using bulky anonymous class implementation
+     */
     public final UnaryOperator<TextFormatter.Change> filterAlphaNumericNoSpace = c -> {
         if (patternAlphaNumericNoSpace.matcher(c.getControlNewText()).matches()) {
             return c;
@@ -698,6 +953,9 @@ public class CustomersAppointsUtils {
             return null;
         }
     };
+    /**
+     * The Filter alpha space. using lambda concise code,avoid using bulky anonymous class implementation
+     */
     public final UnaryOperator<TextFormatter.Change> filterAlphaSpace = c -> {
         if (patternAlphaSpaces.matcher(c.getControlNewText()).matches()) {
             return c;
@@ -705,6 +963,9 @@ public class CustomersAppointsUtils {
             return null;
         }
     };
+    /**
+     * The Filter alpha numeric space. using lambda concise code,avoid using bulky anonymous class implementation
+     */
     public final UnaryOperator<TextFormatter.Change> filterAlphaNumericSpace = c -> {
         if (patternAlphaNumericSpaces.matcher(c.getControlNewText()).matches()) {
             return c;
@@ -713,166 +974,268 @@ public class CustomersAppointsUtils {
         }
     };
 
+    /**
+     * Confirm and delete boolean.
+     *
+     * @param name  the name
+     * @param stage the stage
+     * @return the boolean
+     */
     public boolean confirmAndDelete(String name, Stage stage) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initOwner(stage);
-        alert.initModality(Modality.WINDOW_MODAL);
-        alert.setTitle("Appointment Application");
-        alert.setHeaderText("Delete " + name + "?");
-        alert.setContentText("Are you sure you want to delete?");
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.initOwner(stage);
+            alert.initModality(Modality.WINDOW_MODAL);
+            alert.setTitle("Appointment Application");
+            alert.setHeaderText("Delete " + name + "?");
+            alert.setContentText("Are you sure you want to delete?");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.isEmpty() || result.get() != ButtonType.OK;
+            Optional<ButtonType> result = alert.showAndWait();
+            return result.isEmpty() || result.get() != ButtonType.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
+    /**
+     * Filter list week observable list.
+     *
+     * @param list  the list
+     * @param adate the adate
+     * @return the observable list
+     */
     public ObservableList<Appointment> filterListWeek(List<Appointment> list,
                                                       LocalDate adate) {
-        List<Appointment> filteredList = new ArrayList<>();
-        TemporalField aWeek = WeekFields.of(DayOfWeek.SUNDAY, 1).dayOfWeek();
+        try {
+            List<Appointment> filteredList = new ArrayList<>();
+            TemporalField aWeek = WeekFields.of(DayOfWeek.SUNDAY, 1).dayOfWeek();
 
-        LocalDate startOfWeek = adate.with(aWeek, 1).minusDays(1);
-        LocalDate endOfWeek = startOfWeek.plusDays(8);
-
-
-        prt.printString.accept("Start of week " + startOfWeek.getDayOfWeek() + " date is" + startOfWeek);
-        prt.printString.accept("End of week" + endOfWeek.getDayOfWeek() + " date is " + endOfWeek);
+            LocalDate startOfWeek = adate.with(aWeek, 1).minusDays(1);
+            LocalDate endOfWeek = startOfWeek.plusDays(8);
 
 
-        LocalDate dateInlist;
-        for (Appointment apmnt : list) {
+            prt.printString.accept("Start of week " + startOfWeek.getDayOfWeek() + " date is" + startOfWeek);
+            prt.printString.accept("End of week" + endOfWeek.getDayOfWeek() + " date is " + endOfWeek);
 
-            try {
 
-                dateInlist = convertDateToLocalDate(apmnt.getDateStart());
-                if (dateInlist.isAfter(startOfWeek) && dateInlist.isBefore(endOfWeek)) {
+            LocalDate dateInlist;
+            for (Appointment apmnt : list) {
 
-                    filteredList.add(apmnt);
+                try {
+
+                    dateInlist = convertDateToLocalDate(apmnt.getDateStart());
+                    if (dateInlist.isAfter(startOfWeek) && dateInlist.isBefore(endOfWeek)) {
+
+                        filteredList.add(apmnt);
+                    }
+                } catch (Exception e) {
+                    //e.printStackTrace();
                 }
-            } catch (Exception e) {
-                //e.printStackTrace();
             }
+            return FXCollections.observableList(filteredList);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return FXCollections.observableList(filteredList);
+        return null;
     }
 
+    /**
+     * Filter list contact observable list.
+     *
+     * @param list       the list
+     * @param contact_id the contact id
+     * @return the observable list
+     */
+    public ObservableList<Appointment> filterListContact(List<Appointment> list, Integer contact_id) {
+
+        try {
+            List<Appointment> filteredList = new ArrayList<>();
+
+
+            for (Appointment appointment : list) {
+
+                try {
+
+
+                    if (appointment.getContactId() == contact_id) {
+
+                        filteredList.add(appointment);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return FXCollections.observableList(filteredList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * Filter list month observable list.
+     *
+     * @param list         the list
+     * @param startOfMonth the start of month
+     * @return the observable list
+     */
     public ObservableList<Appointment> filterListMonth(List<Appointment> list, LocalDate startOfMonth) {
-        List<Appointment> filteredList = new ArrayList<>();
+        try {
+            List<Appointment> filteredList = new ArrayList<>();
 
-        LocalDate endOfMonth = startOfMonth.plusMonths(1);
-        startOfMonth = startOfMonth.minusDays(1);
+            LocalDate endOfMonth = startOfMonth.plusMonths(1);
+            startOfMonth = startOfMonth.minusDays(1);
 
 
+            LocalDate dateInlist;
+            for (Appointment apmnt : list) {
 
+                try {
 
-        LocalDate dateInlist;
-        for (Appointment apmnt : list) {
+                    dateInlist = convertDateToLocalDate(apmnt.getDateStart());
+                    if (dateInlist.isAfter(startOfMonth) && dateInlist.isBefore(endOfMonth)) {
 
-            try {
-
-                dateInlist = convertDateToLocalDate(apmnt.getDateStart());
-                if (dateInlist.isAfter(startOfMonth) && dateInlist.isBefore(endOfMonth)) {
-
-                    filteredList.add(apmnt);
+                        filteredList.add(apmnt);
+                    }
+                } catch (Exception e) {
+                    //e.printStackTrace();
                 }
-            } catch (Exception e) {
-                //e.printStackTrace();
             }
+            return FXCollections.observableList(filteredList);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return FXCollections.observableList(filteredList);
+        return null;
     }
 
+    /**
+     * Gets end time based on est.
+     *
+     * @param appointmentTime the appointment time
+     * @return the end time based on est
+     */
     public String getEndTimeBasedOnEst(Timestamp appointmentTime) {
 
-        ZoneId zidUser = ZoneId.of(TimeZone.getDefault().getID());
+        try {
+            ZoneId zidUser = ZoneId.of(TimeZone.getDefault().getID());
 
 
-        LocalDateTime ldt = appointmentTime.toLocalDateTime();
+            LocalDateTime ldt = appointmentTime.toLocalDateTime();
 
 
-        ZonedDateTime nyTime = ZonedDateTime.of(
-                LocalDateTime.of(ldt.getYear(),
-                        ldt.getMonth(), ldt.getDayOfMonth(),
-                        22, 0, 0),
-                ZoneId.of("America/New_York"));
+            ZonedDateTime nyTime = ZonedDateTime.of(
+                    LocalDateTime.of(ldt.getYear(),
+                            ldt.getMonth(), ldt.getDayOfMonth(),
+                            22, 0, 0),
+                    ZoneId.of("America/New_York"));
 
 
+            ZonedDateTime dateTime = nyTime.withZoneSameInstant(zidUser);
 
 
-        ZonedDateTime CaliforniaDateTime = nyTime.withZoneSameInstant(zidUser);
-        prt.printString.accept("California Date-time " + CaliforniaDateTime);
-
-        DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
+            DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
 
 
-        return dtf2.format(CaliforniaDateTime);
+            return dtf2.format(dateTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
+    /**
+     * Gets start time based on est.
+     *
+     * @param appointmentTime the appointment time
+     * @return the start time based on est
+     */
     public String getStartTimeBasedOnEst(Timestamp appointmentTime) {
 
-        ZoneId zidUser = ZoneId.of(TimeZone.getDefault().getID());
+        try {
+            ZoneId zidUser = ZoneId.of(TimeZone.getDefault().getID());
 
 
-        LocalDateTime ldt = appointmentTime.toLocalDateTime();
+            LocalDateTime ldt = appointmentTime.toLocalDateTime();
 
 
-        ZonedDateTime nyTime = ZonedDateTime.of(
-                LocalDateTime.of(ldt.getYear(),
-                        ldt.getMonth(), ldt.getDayOfMonth(),
-                        8, 0, 0),
-                ZoneId.of("America/New_York"));
+            ZonedDateTime nyTime = ZonedDateTime.of(
+                    LocalDateTime.of(ldt.getYear(),
+                            ldt.getMonth(), ldt.getDayOfMonth(),
+                            8, 0, 0),
+                    ZoneId.of("America/New_York"));
 
 
+            ZonedDateTime CaliforniaDateTime = nyTime.withZoneSameInstant(zidUser);
 
 
-        ZonedDateTime CaliforniaDateTime = nyTime.withZoneSameInstant(zidUser);
+            DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
 
 
-        DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
-
-
-        return dtf2.format(CaliforniaDateTime);
+            return dtf2.format(CaliforniaDateTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
+    /**
+     * Is between opening closing boolean.
+     *
+     * @param appointmentTime the appointment time
+     * @return the boolean
+     */
     public boolean isBetweenOpeningClosing(Timestamp appointmentTime) {
 
 
-        ZoneId zidLocal = ZoneId.of(TimeZone.getDefault().getID());    //Source timezone
+        try {
+            ZoneId zidLocal = ZoneId.of(TimeZone.getDefault().getID());    //Source timezone
 
-        ZoneId zidEST = ZoneId.of("America/New_York");  //Target timezone
+            ZoneId zidEST = ZoneId.of("America/New_York");  //Target timezone
 
-        LocalDateTime ldt = appointmentTime.toLocalDateTime();          //Current time
+            LocalDateTime ldt = appointmentTime.toLocalDateTime();          //Current time
 
-        //Zoned date time at source timezone
-        ZonedDateTime zdtAtSource = ldt.atZone(zidLocal);
-        //prt.printString.accept( "  id="+ apmtID+ " converted time="+zdtAtSource.toLocalDateTime());
+            //Zoned date time at source timezone
+            ZonedDateTime zdtAtSource = ldt.atZone(zidLocal);
+            //prt.printString.accept( "  id="+ apmtID+ " converted time="+zdtAtSource.toLocalDateTime());
 
-        //Zoned date time at target timezone
-        ZonedDateTime zdtEST = zdtAtSource.withZoneSameInstant(zidEST);
-        prt.printString.accept("zdtEST=" + zdtEST.toLocalDateTime());
-
-
-        ZonedDateTime zdtopen = ZonedDateTime.of(
-                LocalDateTime.of(zdtEST.getYear(),
-                        zdtEST.getMonth(), zdtEST.getDayOfMonth(),
-                        8, 0, 0),
-                ZoneId.of("America/New_York"));
-
-        prt.printString.accept("zdtopen=" + zdtopen.toLocalDateTime());
-
-        ZonedDateTime zdtclose = ZonedDateTime.of(
-                LocalDateTime.of(zdtEST.getYear(),
-                        zdtEST.getMonth(), zdtEST.getDayOfMonth(),
-                        22, 0, 0),
-                ZoneId.of("America/New_York"));
+            //Zoned date time at target timezone
+            ZonedDateTime zdtEST = zdtAtSource.withZoneSameInstant(zidEST);
 
 
-        return !zdtopen.isBefore(zdtEST) || !zdtclose.isAfter(zdtEST);// Inclusive.
+            ZonedDateTime zdtopen = ZonedDateTime.of(
+                    LocalDateTime.of(zdtEST.getYear(),
+                            zdtEST.getMonth(), zdtEST.getDayOfMonth(),
+                            8, 0, 0),
+                    ZoneId.of("America/New_York"));
+
+
+            ZonedDateTime zdtclose = ZonedDateTime.of(
+                    LocalDateTime.of(zdtEST.getYear(),
+                            zdtEST.getMonth(), zdtEST.getDayOfMonth(),
+                            22, 0, 0),
+                    ZoneId.of("America/New_York"));
+
+
+            return !zdtopen.isBefore(zdtEST) || !zdtclose.isAfter(zdtEST);// Inclusive.
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
+    /**
+     * Time date selected boolean.
+     *
+     * @param dtpkr    the dtpkr
+     * @param startEnd the start end
+     * @return the boolean
+     */
     public Boolean timeDateSelected(DatePicker dtpkr, String startEnd) {
         try {
             if (dtpkr.getValue() == null) {
-                showalert("Please select a date for " + startEnd + " of Appointment");
+                showAlert("Please select a date for " + startEnd + " of Appointment");
                 return false;
 
             }

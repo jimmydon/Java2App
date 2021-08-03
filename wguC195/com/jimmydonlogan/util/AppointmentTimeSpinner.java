@@ -11,13 +11,22 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.input.InputEvent;
 import javafx.util.StringConverter;
 
+/**
+ * The type Appointment time spinner.
+ */
 public class AppointmentTimeSpinner extends Spinner<LocalTime> {
 
-    //  enumTimeUnit represents the unit that is currently being edited.
+    /**
+     * The enum Enum time unit.
+     */
+//  enumTimeUnit represents the unit that is currently being edited.
     // For convenience expose methods for incrementing and decrementing that
     // unit, and for selecting the appropriate portion in a spinner's editor
     enum enumTimeUnit {
 
+        /**
+         * The Hours.
+         */
         HOURS {
             @Override
             LocalTime increment(LocalTime time, int steps) {
@@ -29,6 +38,9 @@ public class AppointmentTimeSpinner extends Spinner<LocalTime> {
                 spinner.getEditor().selectRange(0, index);
             }
         },
+        /**
+         * The Minutes.
+         */
         MINUTES {
             @Override
             LocalTime increment(LocalTime time, int steps) {
@@ -41,6 +53,9 @@ public class AppointmentTimeSpinner extends Spinner<LocalTime> {
                 spinner.getEditor().selectRange(hrIndex+1, minIndex);
             }
         },
+        /**
+         * The Seconds.
+         */
         SECONDS {
             @Override
             LocalTime increment(LocalTime time, int steps) {
@@ -52,8 +67,30 @@ public class AppointmentTimeSpinner extends Spinner<LocalTime> {
                 spinner.getEditor().selectRange(index+1, spinner.getEditor().getText().length());
             }
         };
+
+        /**
+         * Increment local time.
+         *
+         * @param time  the time
+         * @param steps the steps
+         * @return the local time
+         */
         abstract LocalTime increment(LocalTime time, int steps);
+
+        /**
+         * Select.
+         *
+         * @param spinner the spinner
+         */
         abstract void select(AppointmentTimeSpinner spinner);
+
+        /**
+         * Decrement local time.
+         *
+         * @param time  the time
+         * @param steps the steps
+         * @return the local time
+         */
         LocalTime decrement(LocalTime time, int steps) {
             return increment(time, -steps);
         }
@@ -61,9 +98,18 @@ public class AppointmentTimeSpinner extends Spinner<LocalTime> {
 
     // Property containing the current editing mode:
 
+    /**
+     * The Mode.
+     */
     private final ObjectProperty<enumTimeUnit> mode = new SimpleObjectProperty<>(enumTimeUnit.HOURS) ;
 
 
+    /**
+     * Instantiates a new Appointment time spinner.
+     *
+     * @param time the time
+     *  using lambda for mode.addListener:concise code,avoid using bulky anonymous class implementation
+     */
     public AppointmentTimeSpinner(LocalTime time) {
         setEditable(true);
 
@@ -159,6 +205,9 @@ public class AppointmentTimeSpinner extends Spinner<LocalTime> {
 
     }
 
+    /**
+     * Instantiates a new Appointment time spinner.
+     */
     public AppointmentTimeSpinner() {
         this(LocalTime.now());
     }

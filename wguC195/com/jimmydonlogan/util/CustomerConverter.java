@@ -6,9 +6,14 @@ import javafx.util.StringConverter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Customer converter.
+ */
 public class CustomerConverter extends StringConverter<Customer> {
 
-    /** Cache of Customers */
+    /**
+     * The Customer map.
+     */
     private final Map<String, Customer> customerMap = new HashMap<>();
 
     @Override

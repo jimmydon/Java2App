@@ -6,9 +6,14 @@ import javafx.util.StringConverter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Country converter.
+ */
 public class CountryConverter extends StringConverter<Country> {
 
-    /** Cache of Countries */
+    /**
+     * The Country map.
+     */
     private final Map<String, Country> countryMap = new HashMap<>();
 
     @Override
