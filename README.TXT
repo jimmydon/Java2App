@@ -1,7 +1,7 @@
 
 Appointment Application v1.2
-Author: Donald James Logan
-jimmydonlogan@icloud.com
+Author: Don Logan
+
 *********************************************************
 
 
